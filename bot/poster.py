@@ -239,8 +239,20 @@ def get_products_from_db() -> list:
 
 
 def get_image(product: dict) -> str | None:
+    # 40% chance: generate mascot image with DALL-E
+    if random.random() < 0.4:
+        from bot.mascot import generate_mascot_image
+        print("🎨 Generating mascot image...")
+        mascot_url = generate_mascot_image(product)
+        if mascot_url:
+            print(f"✅ Mascot generated: {mascot_url[:60]}...")
+            return mascot_url
+
+    # Use product's uploaded image if available
     if product.get("image_url"):
         return product["image_url"]
+
+    # Fallback: Unsplash photo
     try:
         keywords = {
             "music": "music headphones", "movie": "cinema screen",
