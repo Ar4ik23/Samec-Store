@@ -4,6 +4,8 @@ on:
   schedule:
     # Every day at 10:00 Moscow time (07:00 UTC)
     - cron: "0 7 * * *"
+    # Every day at 19:00 Moscow time (16:00 UTC)
+    - cron: "0 16 * * *"
   workflow_dispatch: # manual trigger button in GitHub
 
 jobs:
