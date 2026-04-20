@@ -7,14 +7,17 @@ SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_KEY = os.environ["SUPABASE_ANON_KEY"]
 
 # Core character description — always included in every generation prompt
+MASCOT_REFERENCE_URL = "https://pfijhdzwjyrypmnwojvn.supabase.co/storage/v1/object/public/product-images/mascot_reference.png"
+
 MASCOT_BASE = (
-    "A cartoon capybara mascot character: orange-brown fur, striking blue eyes, "
-    "large rounded capybara nose, confident slightly smug expression. "
-    "Wearing a white puffer jacket open over a black hoodie/t-shirt, "
-    "teal mint-green jogger pants, white and blue sneakers, silver chain necklace. "
-    "Stocky cute body, hands relaxed. Cartoon illustration style, clean lines, "
-    "vibrant colors, white or transparent background. "
-    "Same character design consistency as a brand mascot."
+    "A cartoon capybara mascot character — EXACT SAME DESIGN as the Samec Store brand mascot: "
+    "orange-brown fur, STRIKING BLUE EYES (very important), large rounded capybara nose, "
+    "confident slightly smug expression, chubby cheeks. "
+    "OUTFIT (must match exactly): white puffer jacket open, black hoodie/t-shirt inside, "
+    "teal mint-green jogger pants, white and blue Nike-style sneakers, silver chain necklace around neck. "
+    "Stocky cute body proportions, short legs. "
+    "Style: vibrant cartoon illustration, clean bold lines, bright colors, "
+    "white or simple background. Character must look like the SAME mascot every time."
 )
 
 # Product-specific scenes — costume + context per category
