@@ -1,0 +1,12 @@
+[
+  {
+    "name": "ChatGPT Plus",
+    "emoji": "🤖",
+    "tag": "technology",
+    "price_ours": 400,
+    "price_official": 1950,
+    "description": "GPT-4o, генерация изображений DALL-E, анализ файлов и кода, приоритет без очередей",
+    "image_url": null,
+    "active": true
+  }
+]
