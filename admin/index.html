@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Samec Store — Админ панель</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">
+      <span class="logo-icon">🛒</span>
+      <span>Samec Store</span>
+    </div>
+    <nav>
+      <a href="#" class="nav-item active" data-page="products">📦 Товары</a>
+      <a href="#" class="nav-item" data-page="posts">📅 Расписание</a>
+      <a href="#" class="nav-item" data-page="settings">⚙️ Настройки</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="https://t.me/samecstore" target="_blank">📢 Открыть канал</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- PRODUCTS PAGE -->
+    <div id="page-products" class="page active">
+      <div class="page-header">
+        <div>
+          <h1>Товары</h1>
+          <p class="subtitle" id="products-count">Загрузка...</p>
+        </div>
+        <button class="btn-primary" onclick="openModal()">+ Добавить товар</button>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="search" placeholder="🔍 Поиск по названию..." oninput="filterProducts()" />
+        <select id="filter-active" onchange="filterProducts()">
+          <option value="all">Все товары</option>
+          <option value="active">Активные</option>
+          <option value="inactive">Неактивные</option>
+        </select>
+      </div>
+
+      <div class="products-grid" id="products-grid">
+        <div class="loading">⏳ Загрузка товаров...</div>
+      </div>
+    </div>
+
+    <!-- POSTS PAGE -->
+    <div id="page-posts" class="page">
+      <div class="page-header">
+        <div>
+          <h1>Расписание постов</h1>
+          <p class="subtitle">Автоматические публикации в канал</p>
+        </div>
+        <button class="btn-primary" onclick="triggerPost()">▶ Опубликовать сейчас</button>
+      </div>
+      <div class="schedule-cards">
+        <div class="schedule-card">
+          <div class="schedule-time">🌅 10:00 МСК</div>
+          <div class="schedule-desc">Утренний пост — русский язык</div>
+          <div class="schedule-badge active">Активно</div>
+        </div>
+        <div class="schedule-card">
+          <div class="schedule-time">🌆 19:00 МСК</div>
+          <div class="schedule-desc">Вечерний пост — английский язык</div>
+          <div class="schedule-badge active">Активно</div>
+        </div>
+      </div>
+      <div class="info-box">
+        ℹ️ Посты публикуются автоматически через GitHub Actions. Бот выбирает случайный активный товар из базы.
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="page-settings" class="page">
+      <div class="page-header">
+        <h1>Настройки</h1>
+      </div>
+      <div class="settings-form">
+        <div class="settings-group">
+          <label>Telegram канал</label>
+          <input type="text" value="@samecstore" readonly />
+        </div>
+        <div class="settings-group">
+          <label>Статус бота</label>
+          <div class="status-badge online">🟢 Работает</div>
+        </div>
+        <div class="settings-group">
+          <label>GitHub репозиторий</label>
+          <a href="https://github.com/Ar4ik23/Samec-Store" target="_blank" class="link">
+            github.com/Ar4ik23/Samec-Store ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add / Edit Product -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Добавить товар</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <input type="hidden" id="product-id" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Название сервиса *</label>
+            <input type="text" id="product-name" placeholder="Spotify Premium" required />
+          </div>
+          <div class="form-group form-group-small">
+            <label>Эмодзи</label>
+            <input type="text" id="product-emoji" placeholder="🎵" maxlength="4" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Наша цена (₽) *</label>
+            <input type="number" id="product-price" placeholder="149" required min="1" />
+          </div>
+          <div class="form-group">
+            <label>Официальная цена (₽)</label>
+            <input type="number" id="product-price-official" placeholder="299" min="1" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Описание (для поста)</label>
+          <textarea id="product-description" placeholder="Музыка без рекламы, офлайн режим, качество Hi-Fi..." rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Категория</label>
+          <select id="product-tag">
+            <option value="music">🎵 Музыка</option>
+            <option value="movie">🎬 Кино/Видео</option>
+            <option value="technology">🤖 Технологии/ИИ</option>
+            <option value="design">🎨 Дизайн</option>
+            <option value="gaming">🎮 Игры</option>
+            <option value="productivity">💼 Продуктивность</option>
+            <option value="education">📚 Образование</option>
+            <option value="privacy">🔒 Безопасность</option>
+            <option value="shopping">📦 Шопинг</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Картинка</label>
+          <div class="image-upload-area" id="image-upload-area" onclick="document.getElementById('image-file').click()">
+            <img id="image-preview" src="" alt="" style="display:none" />
+            <div id="image-placeholder">
+              <span class="upload-icon">📁</span>
+              <span>Нажми чтобы загрузить фото</span>
+              <span class="upload-hint">JPG, PNG, WebP — до 5MB</span>
+            </div>
+          </div>
+          <input type="file" id="image-file" accept="image/*" style="display:none" onchange="previewImage(event)" />
+          <input type="hidden" id="product-image-url" />
+        </div>
+
+        <div class="form-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="product-active" checked />
+            <span class="toggle-text">Товар активен (бот будет его постить)</span>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Отмена</button>
+          <button type="submit" class="btn-primary" id="save-btn">💾 Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE -->
+  <div class="modal-overlay" id="delete-overlay">
+    <div class="modal modal-small">
+      <h2>Удалить товар?</h2>
+      <p id="delete-name" class="delete-desc"></p>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeDelete()">Отмена</button>
+        <button class="btn-danger" onclick="confirmDelete()">🗑 Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
